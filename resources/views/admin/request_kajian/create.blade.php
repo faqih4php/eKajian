@@ -12,7 +12,6 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row g-6">
                 <div class="col-md-12">
-                    @include('components.alert')
                     <div class="card">
                         <h5 class="card-header">Tambah permohonan</h5>
                         <div class="card-body">
@@ -47,16 +46,8 @@
                                     <label for="tgl_kajian" class="form-label fs-6">Tanggal dan Jam Kajian</label>
                                     <input type="datetime-local" class="form-control @error('tgl_kajian') is-invalid
                                     @enderror" value="{{ old('tgl_kajian') }}" placeholder="YYYY-MM-DD HH:MM"
-                                        id="flatpickr-datetime" name="tgl_kajian"> 
+                                        id="flatpickr-datetime" name="tgl_kajian">
                                 </div>
-                                {{-- <div class="mb-4">
-                                    <label for="tgl_kajian" class="form-label fs-6">Tanggal dan Jam Kajian</label>
-                                    <input type="datetime-local"
-                                        class="form-control @error('tgl_kajian') is-invalid
-                                    @enderror"
-                                        id="tgl_kajian" value="{{ old('tgl_kajian') }}" name="tgl_kajian"
-                                        class="form-control">
-                                </div> --}}
                                 <div class="mb-4">
                                     <label for="lokasi" class="form-label fs-6">Lokasi</label>
                                     <input type="text"

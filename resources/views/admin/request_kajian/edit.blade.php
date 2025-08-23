@@ -1,6 +1,9 @@
 @extends('layouts.base')
 @section('title', 'Edit Permohonan')
 @push('css')
+    <link rel="stylesheet" href="/assets/vendor/libs/flatpickr/flatpickr.css">
+    <link rel="stylesheet" href="/assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css">
+    <link rel="stylesheet" href="/assets/vendor/libs/jquery-timepicker/jquery-timepicker.css">
 @endpush
 @section('content')
     <!-- Content wrapper -->
@@ -88,20 +91,24 @@
                                 </div>
                                 <div class="mb-4">
                                     <label for="tgl_kajian" class="form-label fs-6">Tanggal dan Jam Kajian</label>
-                                    <input type="datetime-local"
-                                        class="form-control @error('waktu_kajian') is-invalid
-                                    @enderror"
-                                        id="tgl_kajian" value="{{ old('tgl_kajian', $requestKajian->waktu_kajian) }}"
-                                        name="tgl_kajian" class="form-control">
+                                    <input type="datetime-local" class="form-control @error('tgl_kajian') is-invalid
+                                    @enderror" value="{{ old('tgl_kajian', $requestKajian->waktu_kajian) }}" placeholder="YYYY-MM-DD HH:MM"
+                                        id="flatpickr-datetime" name="tgl_kajian">
                                 </div>
                                 <div class="mb-4">
                                     <label for="status" class="form-label fs-6">Status</label>
                                     <select name="status" id="status"
                                         class="form-select @error('status') is-invalid
                                     @enderror">
-                                        <option value="Menunggu" {{ old('status', $requestKajian->status) == 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
-                                        <option value="Diterima" {{ old('status', $requestKajian->status) == 'Diterima' ? 'selected' : '' }}>Diterima</option>
-                                        <option value="Ditolak" {{ old('status', $requestKajian->status) == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                                        <option value="Menunggu"
+                                            {{ old('status', $requestKajian->status) == 'Menunggu' ? 'selected' : '' }}>
+                                            Menunggu</option>
+                                        <option value="Diterima"
+                                            {{ old('status', $requestKajian->status) == 'Diterima' ? 'selected' : '' }}>
+                                            Diterima</option>
+                                        <option value="Ditolak"
+                                            {{ old('status', $requestKajian->status) == 'Ditolak' ? 'selected' : '' }}>
+                                            Ditolak</option>
                                     </select>
                                 </div>
                                 <div class="mb-6">
@@ -118,4 +125,11 @@
     </div>
 @endsection
 @push('js')
+    <!-- Vendors JS -->
+    <script src="/assets/vendor/libs/moment/moment.js"></script>
+    <script src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
+    <script src="/assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js"></script>
+    <script src="/assets/vendor/libs/jquery-timepicker/jquery-timepickerx.js"></script>
+    <script src="/assets/vendor/libs/pickr/pickr.js"></script>
+    <script src="/assets/js/forms-pickers.js"></script>
 @endpush

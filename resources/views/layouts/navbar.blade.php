@@ -150,18 +150,25 @@
                                                         class="rounded-circle">
                                                 </div>
                                             </div> --}}
+                                            <div class="flex-grow-1 me-4">
+                                                <h6>{{ $loop->iteration }}.</h6>
+                                            </div>
                                             <div class="flex-grow-1">
-                                                <h6 class=" mb-0">Nama pemohon: {{ ucfirst($kajian->name) }}</h6>
-                                                <h6 class="mb-0">Jenis Waktu Kajian: {{ $kajian->jenis_kajian->name }}</h6>
-                                                <h6 class="mb-3 d-block">Tema Kajian:
+                                                <h6 class=" mb-0 text-warning">Nama pemohon: {{ ucfirst($kajian->name) }}
+                                                </h6>
+                                                <h6 class="mb-0 text-info">Jenis Waktu Kajian:
+                                                    {{ $kajian->jenis_kajian->name }}</h6>
+                                                <h6 class="mb-3 d-block text-info">Tema Kajian:
                                                     @if ($kajian->tema_kajian == null)
                                                         Tidak ada tema kajian
                                                     @else
-                                                        {{ $kajian->tema_kajian }}
+                                                        {{ ucfirst($kajian->tema_kajian) }}
                                                     @endif
                                                 </h6>
                                                 <h6 class="text-body mb-0">Lokasi: {{ $kajian->lokasi }}</h6>
-                                                <h6 class="text-body">Waktu Kajian: {{ \Carbon\Carbon::parse($kajian->waktu_kajian)->format('l, d F Y H:i') }}</h6>
+                                                <h6 class="text-body">Waktu Kajian:
+                                                    {{ \Carbon\Carbon::parse($kajian->waktu_kajian)->format('l, d F Y H:i') }}
+                                                </h6>
                                             </div>
                                             <div class="flex-shrink-0 dropdown-notifications-actions">
                                                 {{-- <a href="javascript:void(0)" class="dropdown-notifications-read"><span
@@ -254,7 +261,7 @@
                         <li>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="dropdown-item"> <i
+                                <button type="submit" class="dropdown-item" id> <i
                                         class="icon-base bx bx-power-off icon-md me-3"></i><span>Log
                                         Out</span>
                                 </button>

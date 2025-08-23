@@ -17,27 +17,26 @@
                         data-app-light-img="illustrations/boy-with-rocket-light.png">
                 </div>
             </div>
-            <!-- /Left Text -->
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-
 
             <!-- Login -->
             <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
 
                 <div class="w-px-400 mx-auto mt-sm-12 mt-8">
-                    <a href="{{ route('welcome') }}" class="nav-item btn btn-primary mb-10" style="color: #ffffff;"><i class="icon-base bx bx-left-arrow-alt icon-md me-2" style="color: #ffffff;"></i>Back</a>
+
+                    <a href="{{ route('welcome') }}" class="nav-item btn btn-primary mb-10" style="color: #ffffff;"><i
+                            class="icon-base bx bx-left-arrow-alt icon-md me-2" style="color: #ffffff;"></i>Back</a>
                     <h4 class="mb-1">Welcome to eKajian! 👋</h4>
                     <p class="mb-6">Please sign-in to your account and start the adventure</p>
-
+                        <!-- /Left Text -->
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <form action="{{ route('login.post') }}" id="formAuthentication" class="mb-6" method="POST"
                         novalidate>
                         @csrf

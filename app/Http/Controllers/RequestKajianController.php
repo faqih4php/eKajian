@@ -75,7 +75,7 @@ class RequestKajianController extends Controller
             return redirect()->back()
                     ->withInput()->with('error', 'Format tanggal kajian tidak valid, gunakan format YYYY-MM-DD HH:mm');
         }
-        
+
         // cek apakah jadwal kajian sudah ada
         $jadwalKajian = JadwalKajian::where('waktu_kajian', $data['waktu_kajian'])->first();
         if ($jadwalKajian) {
@@ -161,8 +161,14 @@ class RequestKajianController extends Controller
             'tgl_kajian.date_format' => 'Format tanggal kajian tidak valid, gunakan format Y-m-d H:i:s'
         ]);
 
-        $data['waktu_kajian'] = $data['tgl_kajian'];
-        unset($data['tgl_kajian']);
+        try {
+            $data['status'] = $data['status'] ?? 'Menunggu';
+            $data['waktu_kajian'] = \Carbon\Carbon::parse($data['tgl_kajian'])->format('Y-m-d H:i:s');
+            unset($data['tgl_kajian']);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                    ->withInput()->with('error', 'Format tanggal kajian tidak valid, gunakan format YYYY-MM-DD HH:mm');
+        }
 
         $requestKajian->update($data);
 
@@ -213,5 +219,17 @@ class RequestKajianController extends Controller
                 ->delete(); // Remove the notification for the request
         }
         return redirect()->route('request-kajian.index')->with('success', 'Permohonan berhasil di tolak');
+    }
+
+    public function updateStatus(Request $request, RequestKajian $requestKajian)
+    {
+        $data = $request->validate([
+            'status' => 'required|in:Menunggu,Diterima,Ditolak'
+        ], [
+            'status.required' => 'Status harus diisi',
+        ]);
+
+        $requestKajian->update(['status' => $data['status']]);
+        return redirect()->back()->with('success', 'Status berhasil di ubah');
     }
 }

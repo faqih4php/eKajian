@@ -35,7 +35,7 @@ class AuthController extends Controller
                 return redirect()->route('home.index');
             }
 
-            return redirect()->route('guest.index');
+            return redirect()->route('guest.index')->with('info', 'Selamat datang admin');
         }
 
         return back()->withErrors([

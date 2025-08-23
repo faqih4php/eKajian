@@ -82,7 +82,6 @@
                         Permohonan</a>
                 </div>
                 <div class="table-responsive text-nowrap">
-                    @include('components.alert')
                     <div class="container mb-3">
                         <table class="table p-2" id="dataTable">
                             <thead>
@@ -251,7 +250,7 @@
 
                     // Set action URL untuk form di modal
                     editStatusForm.action =
-                        `/request-kajian/${requestId}/`; // Sesuaikan dengan route update Anda
+                        `/request-kajian/${requestId}/update-status`; // Sesuaikan dengan route update Anda
 
                     // Tampilkan modal
                     editStatusModal.show();

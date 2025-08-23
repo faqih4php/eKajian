@@ -35,6 +35,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/request-kajian/delete/{requestKajian}', [RequestKajianController::class, 'destroy'])->name('request-kajian.destroy');
         Route::put('/request-kajian/approve/{requestKajian}', [RequestKajianController::class, 'approve'])->name('request-kajian.approve');
         Route::put('/request-kajian/reject/{requestKajian}', [RequestKajianController::class, 'reject'])->name('request-kajian.reject');
+        Route::put('/request-kajian/{requestKajian}/update-status', [RequestKajianController::class, 'updateStatus'])->name('request-kajian.updateStatus');
 
         // !jadwal kajian routes
         Route::get('/jadwal-kajian/create', [JadwalKajianController::class, 'create'])->name('jadwal-kajian.create');
@@ -42,7 +43,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/jadwal-kajian/show/{jadwalKajian}', [JadwalKajianController::class, 'show'])->name('jadwal-kajian.show');
         Route::get('/jadwal-kajian/edit/{jadwalKajian}', [JadwalKajianController::class, 'edit'])->name('jadwal-kajian.edit');
         Route::put('/jadwal-kajian/{jadwalKajian}', [JadwalKajianController::class, 'update'])->name('jadwal-kajian.update');
-        Route::delete('/jadwal-kajian/{jadwalKajian}', [JadwalKajianController::class, 'destroy'])->name('jadwal-kajian.destroy');
+        Route::delete('/jadwal-kajian/{jadwalKajian}/delete', [JadwalKajianController::class, 'destroy'])->name('jadwal-kajian.destroy');
+        Route::get('/events/jadwal-kajian', [JadwalKajianController::class, 'getEvents'])->name('jadwal-kajian.events');
+        Route::put('/events/jadwal-kajian/{jadwalKajian}', [JadwalKajianController::class, 'dropEvents'])->name('jadwal-kajian.drop');
 
         Route::resource('jabatans', JabatanController::class);
         Route::resource('jenis-kajian', JenisKajianController::class);
