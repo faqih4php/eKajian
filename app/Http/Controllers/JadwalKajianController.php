@@ -34,7 +34,7 @@ class JadwalKajianController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, RequestKajian $requestKajian)
+    public function store(Request $request, Jadwalkajian $jadwalKajian, RequestKajian $requestKajian)
     {
         $data = $request->validate([
             'name' => 'required|max:100',
@@ -53,6 +53,11 @@ class JadwalKajianController extends Controller
             'tgl_kajian.required' => 'Waktu kajian harus diisi',
             'tgl_kajian.date' => 'Format tanggal harus YYYY-MM-DD HH:mm'
         ]);
+
+        $jadwalKajian = JadwalKajian::where('waktu_kajian', $data['tgl_kajian'])->first();
+        if($jadwalKajian){
+            return redirect()->back()->withInput()->with('error', 'Jadwal Kajian sudah tersedia, harap pilih tanggal atau jam yang lain');
+        }
 
         $data['waktu_kajian'] = \Carbon\Carbon::parse($data['tgl_kajian'])->format('Y-m-d H:i:s');
         unset($data['tgl_kajian']);
@@ -140,7 +145,7 @@ class JadwalKajianController extends Controller
                     ->withInput()->with('error', 'Format tanggal kajian tidak valid, gunakan format YYYY-MM-DD HH:mm');
         }
 
-        $requestKajian->update($data);
+        $jadwalKajian->update($data);
         return redirect()->back();
     }
 
@@ -160,16 +165,7 @@ class JadwalKajianController extends Controller
                 'purple' => '#181265'
             ];
 
-            // Ambil warna random jika jenis kajian > jumlah warna
-            $jenisKajian = [
-                'Bada Subuh' => $colors['dark'],
-                'Bada Dhuha' => $colors['primary'],
-                'Bada Dhuhur' => $colors['danger'],
-                'Bada Ashar' => $colors['warning'],
-                'Bada Maghrib' => $colors['success'],
-                'Bada Isya' => $colors['info'],
-
-            ];
+            $color = $colors[$kajian->jenis_kajian_id] ?? '#696cff';
 
             return [
                 'id' => $kajian->id,
@@ -177,8 +173,8 @@ class JadwalKajianController extends Controller
                 'title' => $kajian->tema_kajian ?? 'Tidak ada tema',
                 'start' => $kajian->waktu_kajian,
                 'end' => $kajian->waktu_kajian,
-                'backgroundColor' => $jenisKajian,
-                'borderColor' => $jenisKajian,
+                'backgroundColor' => $color,
+                'borderColor' => $color,
                 'extendedProps' => [
                     'lokasi' => $kajian->lokasi,
                     'jenis_kajian_id' => $kajian->jenis_kajian_id,

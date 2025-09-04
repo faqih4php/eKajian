@@ -56,11 +56,11 @@
                                     <select
                                         class="form-select @error('jenis_kajian') is-invalid
                                     @enderror"
-                                        name="jenis_kajian" id="jenis_kajian" value="{{ old('jenis-kajian') }}">
+                                        name="jenis_kajian_id" id="jenis_kajian_id" value="{{ old('jenis-kajian') }}">
                                         <option value="">Waktu Kajian</option>
                                         @foreach ($jenisKajians as $jenisKajian)
                                             <option value="{{ $jenisKajian->id }}"
-                                                {{ old('jenis_kajian') == $jenisKajian->id ? 'selected' : '' }}>
+                                                {{ old('jenis_kajian_id') == $jenisKajian->id ? 'selected' : '' }}>
                                                 {{ $jenisKajian->name }}
                                             </option>
                                         @endforeach

@@ -276,107 +276,11 @@
     <script src="/assets/vendor/libs/select2/select2.js"></script>
     <script src="/assets/vendor/libs/moment/moment.js"></script>
     <script src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
-    <script src="/assets/vendor/libs/flatpickr/flatpickr.js"></script>
     <script src="/assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js"></script>
-    <script src="/assets/vendor/libs/jquery-timepicker/jquery-timepickerx.js"></script>
+    <script src="/assets/vendor/libs/jquery-timepicker/jquery-timepicker.js"></script>
     <script src="/assets/vendor/libs/pickr/pickr.js"></script>
     <script src="/assets/js/forms-pickers.js"></script>
     <script>
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const inlineCalendar = flatpickr('.inline-calendar', {
-        //         inline: true,
-        //         enableTime: false,
-        //         defaultDate: 'today',
-        //         onChange: function(selectedDates, dateStr) {
-        //             // Optional: Sinkronkan dengan calendar utama
-        //             calendar.gotoDate(dateStr);
-        //         }
-        //     });
-        //     let calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-        //         initialView: 'dayGridMonth',
-        //         headerToolbar: {
-        //             left: 'prev,next today',
-        //             center: 'title',
-        //             right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-        //         },
-        //         events: '/events/jadwal-kajian', // URL untuk mengambil events
-        //         editable: true,
-        //         selectable: true,
-        //         dayMaxEvents: true,
-        //         eventTimeFormat: {
-        //             hour: '2-digit',
-        //             minute: '2-digit',
-        //             hour12: false
-        //         },
-        //         select: function(info) {
-        //             // Reset form untuk event baru
-        //             $('#eventForm')[0].reset();
-        //             $('#eventId').val('');
-        //             $('#waktu_kajian').val(moment(info.start).format('YYYY-MM-DDTHH:mm'));
-        //             $('#modalTitle').text('Tambah Jadwal Kajian');
-        //             $('#eventModal').modal('show');
-        //         },
-        //         eventClick: function(info) {
-        //             // Isi form untuk edit
-        //             $('#eventId').val(info.event.id);
-        //             $('#name').val(info.event.extendedProps['name']);
-        //             $('#tema_kajian').val(info.event.title);
-        //             $('#lokasi').val(info.event.extendedProps.lokasi);
-        //             $('#jenis_kajian_id').val(info.event.extendedProps.jenis_kajian_id);
-        //             $('#flatpickr-datetime').val(moment(info.event.start).format('YYYY-MM-DDTHH:mm'));
-        //             $('#modalTitle').text('Edit Jadwal Kajian');
-        //             $('#eventModal').modal('show');
-        //         },
-        //         eventDrop: function(info) {
-        //             // Handle drag & drop event
-        //             let event = info.event;
-        //             $.ajax({
-        //                 url: `/jadwal-kajian/${event.id}/update`,
-        //                 type: 'PUT',
-        //                 data: {
-        //                     _token: '{{ csrf_token() }}',
-        //                     waktu_kajian: moment(event.start).format('YYYY-MM-DD HH:mm:ss')
-        //                 },
-        //                 success: function() {
-        //                     calendar.refetchEvents();
-        //                     Swal.fire('success', 'Jadwal berhasil diupdate', 'success');
-        //                 }
-        //             });
-        //         }
-        //     });
-        //     calendar.render();
-
-        //     // Handle form submit
-        //     $('#eventForm').on('submit', function(e) {
-        //         e.preventDefault();
-        //         let id = $('#eventId').val();
-        //         let url = id ? `/jadwal-kajian/${id}/update` : '/jadwal-kajian/store';
-        //         let method = id ? 'PUT' : 'POST';
-
-        //         $.ajax({
-        //             url: url,
-        //             method: method,
-        //             data: $(this).serialize(),
-        //             success: function(response) {
-        //                 $('#eventModal').modal('hide');
-        //                 calendar.refetchEvents();
-        //                 Swal.fire({
-        //                     icon: 'success',
-        //                     title: 'Berhasil',
-        //                     text: 'Jadwal kajian berhasil disimpan'
-        //                 });
-        //             },
-        //             error: function(xhr) {
-        //                 Swal.fire({
-        //                     icon: 'error',
-        //                     title: 'Error',
-        //                     text: xhr.responseJSON.message ||
-        //                         'Gagal menyimpan jadwal kajian'
-        //                 });
-        //             }
-        //         });
-        //     });
-        // });
         document.addEventListener('DOMContentLoaded', function() {
             // Calendar options berdasarkan role
             const inlineCalendar = flatpickr('.inline-calendar', {
@@ -395,7 +299,7 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
                 },
-                events: '/events/jadwal-kajian',
+                events: '{{ route("jadwal-kajian.events") }}',
                 eventTimeFormat: {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -412,9 +316,10 @@
                 select: function(info) {
                     $('#eventForm')[0].reset();
                     $('#eventId').val('');
-                    $('#waktu_kajian').val(moment(info.start).format('YYYY-MM-DDTHH:mm'));
+                    $('#flatpickr-datetime').val(moment(info.start).format('YYYY-MM-DD HH:mm'));
                     $('#modalTitle').text('Tambah Jadwal Kajian');
-                    $('#eventModal').omodal('show');
+                    $('#deleteBtn').hide();
+                    $('#eventModal').modal('show');
                 },
                 eventClick: function(info) {
                     $('#eventId').val(info.event.id);
@@ -424,16 +329,16 @@
                     $('#jenis_kajian_id').val(info.event.extendedProps.jenis_kajian_id);
                     $('#flatpickr-datetime').val(moment(info.event.start).format('YYYY-MM-DD HH:mm'));
                     $('#modalTitle').text('Edit Jadwal Kajian');
+                    $('#deleteBtn').show();
                     $('#eventModal').modal('show');
                 },
                 eventDrop: function(info) {
                     let event = info.event;
                     $.ajax({
                         url: `/events/jadwal-kajian/${event.id}`,
-                        type: 'POST',
+                        method: 'PUT',
                         data: {
                             _token: '{{ csrf_token() }}',
-                            _method: 'PUT',
                             tgl_kajian: moment(event.start).format('YYYY-MM-DD HH:mm')
                         },
                         success: function() {
@@ -477,8 +382,8 @@
         @endauth
 
         // Inisialisasi calendar dengan options yang sudah disesuaikan
-        let calendar = new FullCalendar.Calendar(document.getElementById('calendar'), calendarOptions); calendar
-        .render();
+        let calendar = new FullCalendar.Calendar(document.getElementById('calendar'), calendarOptions);
+        calendar.render();
 
         @auth
         // Form submit handler hanya untuk admin

@@ -42,7 +42,7 @@ class RequestKajianController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, JadwalKajian $jadwalKajian)
+    public function store(Request $request, RequestKajian $requestKajian, JadwalKajian $jadwalKajian)
     {
         $data = $request->validate([
             'name' => 'required|max:100',
