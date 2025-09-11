@@ -118,9 +118,8 @@ class RequestKajianController extends Controller
      */
     public function show(RequestKajian $requestKajian)
     {
-        $jabatans = Jabatan::all();
-        $jenis_kajian = JenisKajian::all();
-        return view('admin.request_kajian.DataRequestKajian.show', compact('requestKajian', 'jabatans', 'jenis_kajian'));
+        $requestKajian->load(['jabatan', 'jenis_kajian']);
+        return view('admin.request_kajian.DataRequestKajian.show', compact('requestKajian'));
     }
 
     /**
@@ -205,7 +204,7 @@ class RequestKajianController extends Controller
                 ->where('data->id', $requestKajian->id)
                 ->delete(); // Remove the notification for the request
         }
-        return redirect()->back()->with('success', 'Permohonan berhasil di setujui, dan di tambahkan ke jadwal kajian');
+        return redirect()->route('request-kajian.index')->with('success', 'Permohonan berhasil di setujui, dan di tambahkan ke jadwal kajian');
     }
 
     public function reject(RequestKajian $requestKajian, JadwalKajian $jadwalKajian)

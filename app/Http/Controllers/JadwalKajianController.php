@@ -125,7 +125,7 @@ class JadwalKajianController extends Controller
     public function destroy(JadwalKajian $jadwalKajian)
     {
         $jadwalKajian->delete();
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        return response()->json(['success' => true, 'message' => 'Data berhasil dihapus']);
     }
 
     public function dropEvents(Request $request, JadwalKajian $jadwalKajian)
@@ -149,33 +149,62 @@ class JadwalKajianController extends Controller
         return redirect()->back();
     }
 
-    public function getEvents()
+    public function getEvents(Request $request)
     {
-        $events = JadwalKajian::with('jenis_kajian')->get()->map(function($kajian) {
+        $filters = $request->input('filters', []);
+        $events = JadwalKajian::with('jenis_kajian')->when($filters, function($query, $filters) {
+            $query->whereIn('jenis_kajian_id', $this->mapFilters($filters));
+        })->get()->map(function($kajian) {
             // Tentukan warna berdasarkan jenis kajian
             $colors = [
-                'dark' => '6B6C9D',
-                'primary' => '#696cff',   // Biru
-                'success' => '#71dd37',   // Hijau
-                'danger' => '#ff3e1d',    // Merah
-                'warning' => '#ffab00',   // Kuning
-                'info' => '#03c3ec',       // Biru Muda
-                'pink' => '#c900cc',
-                'blue' => '#132599',
-                'purple' => '#181265'
+                1 => [
+                    'bg' => '#2b2c40',
+                    'text' => '#fff'
+                ],
+                2 => [
+                    'bg' => '#696cff',
+                    'text' => '#fff'
+                ],   // Biru
+                3 => [
+                    'bg' => '#ff3e1d',
+                    'text' => '#fff'
+                ],   // Hijau
+                4 => [
+                    'bg' => '#ffab00',
+                    'text' => '#fff'
+                ],    // Merah
+                5 => [
+                    'bg' => '#71dd37',
+                    'text' => '#fff'
+                ],   // Kuning
+                6 => [
+                    'bg' => '#03c3ec',
+                    'text' => '#fff'
+                ],       // Biru Muda
+                7 => [
+                    'bg' => '#1da1f2',
+                    'text' => '#fff'
+                ],
+                8 => [
+                    'bg' => '#0077b5',
+                    'text' => '#fff'
+                ],
+                9 => [
+                    'bg' => '#3b5998',
+                    'text' => '#fff'
+                    ]
             ];
 
             $color = $colors[$kajian->jenis_kajian_id] ?? '#696cff';
 
             return [
                 'id' => $kajian->id,
-                'name' => $kajian->name,
-                'title' => $kajian->tema_kajian ?? 'Tidak ada tema',
+                'title' => $kajian->tema_kajian,
                 'start' => $kajian->waktu_kajian,
                 'end' => $kajian->waktu_kajian,
-                'backgroundColor' => $color,
-                'borderColor' => $color,
+                'color' => $color['bg'],
                 'extendedProps' => [
+                    'name' => $kajian->name,
                     'lokasi' => $kajian->lokasi,
                     'jenis_kajian_id' => $kajian->jenis_kajian_id,
                     'jenis_kajian' => $kajian->jenis_kajian->name,
@@ -185,5 +214,20 @@ class JadwalKajianController extends Controller
 
         return response()->json($events);
 
+    }
+
+    private function mapFilters($filters)
+    {
+        return [
+            'subuh' => 1,
+            'dhuha' => 2,
+            'dhuhur' => 3,
+            'ashar' => 4,
+            'maghrib' => 5,
+            'isya' => 6,
+            'jumat' => 7,
+            'fitri' => 8,
+            'adha' => 9,
+        ][$filters] ?? [];
     }
 }

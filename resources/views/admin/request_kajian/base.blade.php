@@ -76,10 +76,14 @@
                 </div>
             </div>
             <div class="card">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-column justify-content-between align-items-start px-5">
                     <h5 class="card-header">List Permohonan Kajian</h5>
-                    <a href="{{ route('request-kajian.create') }}" type="button" class="btn btn-primary h-50 me-7">Buat
-                        Permohonan</a>
+                    {{-- <a href="{{ route('request-kajian.create') }}" type="button" class="btn btn-primary h-50 me-7">Buat
+                        Permohonan</a> --}}
+                    <div class="alert alert-info alert-dismissible w-100" role="alert">
+                        Di list ini admin bisa mengedit status request kajian — Pastikan jika request kajian sudah di Approve/Reject lalu ingin mengganti status <br> periksa kembali Jadwal Kajian
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 </div>
                 <div class="table-responsive text-nowrap">
                     <div class="container mb-3">

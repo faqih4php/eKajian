@@ -143,7 +143,7 @@
                             <ul class="list-group list-group-flush">
                                 @forelse ($pendingRequest as $kajian)
                                     <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                        <div class=" d-flex">
+                                        <div class="d-flex">
                                             {{-- <div class="flex-shrink-0 me-3">
                                                 <div class="avatar">
                                                     <img src="../../assets/img/avatars/1.png" alt=""
@@ -169,16 +169,7 @@
                                                 <h6 class="text-body">Waktu Kajian:
                                                     {{ \Carbon\Carbon::parse($kajian->waktu_kajian)->format('l, d F Y H:i') }}
                                                 </h6>
-                                            </div>
-                                            <div class="flex-shrink-0 dropdown-notifications-actions">
-                                                {{-- <a href="javascript:void(0)" class="dropdown-notifications-read"><span
-                                                        class="badge badge-dot"></span></a> --}}
-                                                <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
-                                                        class="icon-base bx bx-x"></span></a>
-                                                <div class="d-flex flex-column mt-7">
-                                                    {{-- <span class="badge btn-label-success h7 mb-3">Approve</span>
-                                                    <span class="badge btn-label-danger h7">Reject</span> --}}
-                                                    <form action="{{ route('request-kajian.approve', $kajian->id) }}"
+                                                {{-- <form action="{{ route('request-kajian.approve', $kajian->id) }}"
                                                         method="POST">
                                                         @csrf
                                                         @method('PUT')
@@ -193,8 +184,25 @@
                                                         <button type="submit" class="btn btn-label-danger"
                                                             style="width: 85px; height: 27px;"><span
                                                                 class="icon-base bx bx-x"></span></button>
-                                                    </form>
+                                                    </form> --}}
+                                                <a href="{{ route('request-kajian.show', $kajian->id) }}"
+                                                    class="btn btn-label-warning mt-2"
+                                                    style="width: 170px; height: 35px;">
+                                                    <h7>
+                                                        Lihat Permohonan
+                                                    </h7>
+                                                </a>
+                                            </div>
+                                            <div class="flex">
+                                                <div class="d-flex flex-column mt-7">
+
                                                 </div>
+                                            </div>
+                                            <div class="flex-shrink-0 dropdown-notifications-actions">
+                                                {{-- <a href="javascript:void(0)" class="dropdown-notifications-read"><span
+                                                        class="badge badge-dot"></span></a> --}}
+                                                <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
+                                                        class="icon-base bx bx-x"></span></a>
                                             </div>
                                         </div>
                                     </li>

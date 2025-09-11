@@ -127,6 +127,7 @@
     @stack('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Form Delete
             const deleteForms = document.querySelectorAll('.form-delete');
 
             deleteForms.forEach(form => {
@@ -146,17 +147,16 @@
                     });
                 });
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const deleteForms = document.querySelectorAll('.form-reject');
+            // Form Reject
+            const rejectForms = document.querySelectorAll('.form-reject');
 
-            deleteForms.forEach(form => {
+            rejectForms.forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault(); // cegah submit otomatis
 
                     Swal.fire({
-                        ...getSwalOptions('info', 'Reject Request Kajian?',
+                        ...getSwalOptions('error', 'Reject Request Kajian?',
                             'Data ini akan ditolak.'),
                         showCancelButton: true,
                         confirmButtonText: 'Ya, tolak!',

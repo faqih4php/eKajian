@@ -11,6 +11,53 @@
     <link rel="stylesheet" href="/assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css">
     <link rel="stylesheet" href="/assets/vendor/libs/jquery-timepicker/jquery-timepicker.css">
     <style>
+        .fc-event.select-subuh {
+            background-color: #6B6C9D !important;
+        }
+
+        .fc-event.select-dhuha {
+            background-color: #696cff !important;
+        }
+
+        .fc-event.select-dhuhur {
+            background-color: #71dd37 !important;
+        }
+
+        .fc-event.select-ashar {
+            background-color: #ff3e1d !important;
+        }
+
+        .fc-event.select-maghrib {
+            background-color: #ffab00 !important;
+        }
+
+        .fc-event.select-isya {
+            background-color: #03c3ec !important;
+        }
+
+        .fc-event.select-jumat {
+            background-color: #c900cc !important;
+        }
+
+        .fc-event.select-fitri {
+            background-color: #132599 !important;
+        }
+
+        .fc-event.select-adha {
+            background-color: #181265 !important;
+        }
+
+        .fc-event {
+            margin: 2px;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .fc-event-title {
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
         .inline-calendar .flatpickr-calendar {
             box-shadow: none;
             margin: 0 auto;
@@ -237,8 +284,7 @@
                                                             href="{{ route('jadwal-kajian.edit', $jadwalKajian->id) }}"><i
                                                                 class="icon-base bx bx-edit-alt me-1"></i> Edit</a>
                                                         <form action="{{ route('jadwal-kajian.destroy', $jadwalKajian->id) }}"
-                                                            method="POST" onsubmit="return confirm('Yakin mau hapus?')"
-                                                            class="d-inline">
+                                                            method="POST" class="d-inline forms-delete">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="dropdown-item">
@@ -282,6 +328,26 @@
     <script src="/assets/js/forms-pickers.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Form Delete
+            const deleteForms = document.querySelectorAll('.forms-delete')
+            deleteForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // cegah submit otomatis
+
+                    Swal.fire({
+                        ...getSwalOptions('warning', 'Hapus Data?',
+                            'Data ini akan dihapus permanen.'),
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
             // Calendar options berdasarkan role
             const inlineCalendar = flatpickr('.inline-calendar', {
                 inline: true,
@@ -299,11 +365,18 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
                 },
-                events: '{{ route("jadwal-kajian.events") }}',
+                events: '{{ route('jadwal-kajian.events') }}',
                 eventTimeFormat: {
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: false
+                },
+                eventDidMount: function(info) {
+                    // Format tampilan event dengan jam dan lokasi
+                    const location = info.event.extendedProps.lokasi;
+                    info.el.querySelector('.fc-event-title').innerHTML = `${location}`;
+                    info.el.style.color = info.event.color;
+                    // info.el.style.whiteSpace = 'pre-line';
                 },
                 dayMaxEvents: true
             };
@@ -367,11 +440,12 @@
                     Swal.fire({
                         title: info.event.title || 'Jadwal Kajian',
                         html: `
-                    <div class="text-start">
-                        <p><strong>Pemateri:</strong> ${info.event.extendedProps.name}</p>
-                        <p><strong>Lokasi:</strong> ${info.event.extendedProps.lokasi}</p>
-                        <p><strong>Jenis Kajian:</strong> ${info.event.extendedProps.jenis_kajian}</p>
-                        <p><strong>Waktu:</strong> ${moment(info.event.start).format('DD MMMM YYYY HH:mm')}</p>
+                    <div class="text-start ">
+                        <p><strong>Pemohon: </strong> ${info.event.extendedProps.name}</p>
+                        <p><strong>Lokasi: </strong> ${info.event.extendedProps.lokasi}</p>
+                        <p><strong>Tema Kajian: </strong> ${info.event.title}</p>
+                        <p><strong>Jenis Kajian: </strong> ${info.event.extendedProps.jenis_kajian}</p>
+                        <p><strong>Waktu: </strong> ${moment(info.event.start).format('DD MMMM YYYY HH:mm')}</p>
                     </div>
                 `,
                         showCloseButton: true,
@@ -383,6 +457,7 @@
 
         // Inisialisasi calendar dengan options yang sudah disesuaikan
         let calendar = new FullCalendar.Calendar(document.getElementById('calendar'), calendarOptions);
+
         calendar.render();
 
         @auth
@@ -431,6 +506,38 @@
                                 'Gagal menyimpan jadwal kajian'
                         });
                     }
+                }
+            });
+        });
+        $('#deleteBtn').on('click', function() {
+            // Tutup modal terlebih dahulu
+            const modal = bootstrap.Modal.getInstance(document.getElementById('eventModal'));
+            modal.hide();
+
+            Swal.fire({
+                title: 'Hapus Data?',
+                text: 'Data ini akan dihapus permanen.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let id = $('#eventId').val();
+                    $.ajax({
+                        url: `/jadwal-kajian/${id}/delete`,
+                        method: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function() {
+                            calendar.refetchEvents();
+                            Swal.fire('Berhasil', 'Jadwal berhasil dihapus', 'success');
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Gagal menghapus jadwal', 'error');
+                        }
+                    });
                 }
             });
         });
