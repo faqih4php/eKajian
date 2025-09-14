@@ -11,6 +11,24 @@
     <link rel="stylesheet" href="/assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css">
     <link rel="stylesheet" href="/assets/vendor/libs/jquery-timepicker/jquery-timepicker.css">
     <style>
+        .loader {
+            display: absolute;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .loader {
+            /* gelap transparan */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            /* di atas modal & content */
+        }
+
         .fc-event.select-subuh {
             background-color: #6B6C9D !important;
         }
@@ -84,7 +102,6 @@
                             <div>
                                 <h5>Jadwal Kajian Filters</h5>
                             </div>
-
                             <div class="form-check form-check-secondary mb-5 ms-2">
                                 <input class="form-check-input select-all" type="checkbox" id="selectAll" data-value="all"
                                     checked="">
@@ -214,9 +231,9 @@
                                                 <span class="align-middle">Kembali</span>
                                             </button>
                                             @auth
-                                                <button type="submit" class="btn btn-primary" id="saveBtn">
+                                                <button type="submit" class="btn btn-primary" id="btn-submit">
                                                     <i class="bx bx-check me-1"></i>
-                                                    <span class="align-middle">Simpan</span>
+                                                    <span id="btn-text" class="align-middle">Simpan</span>
                                                 </button>
                                                 <button type="button" class="btn btn-danger" id="deleteBtn" style="">
                                                     <i class="bx bx-trash me-1"></i>
@@ -310,7 +327,20 @@
 
         <div class="content-backdrop fade"></div>
     </div>
+
     <!-- Content wrapper -->
+@endsection
+@section('loader')
+    <div class="loader d-none">
+        <div class="sk-chase " id="loader">
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
@@ -327,26 +357,14 @@
     <script src="/assets/vendor/libs/pickr/pickr.js"></script>
     <script src="/assets/js/forms-pickers.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Form Delete
-            const deleteForms = document.querySelectorAll('.forms-delete')
-            deleteForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault(); // cegah submit otomatis
+        function showLoader() {
+            document.getElementById('loader').classList.remove('d-none');
+        }
 
-                    Swal.fire({
-                        ...getSwalOptions('warning', 'Hapus Data?',
-                            'Data ini akan dihapus permanen.'),
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, hapus!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
+        function hideLoader() {
+            document.getElementById('loader').classList.add('d-none');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
 
             // Calendar options berdasarkan role
             const inlineCalendar = flatpickr('.inline-calendar', {
@@ -461,12 +479,27 @@
         calendar.render();
 
         @auth
-        // Form submit handler hanya untuk admin
-        $('#eventForm').on('submit', function(e) {
+
+        $('#eventForm').on('click', function(e) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById(
+                'eventModal'));
+            modal.hide();
             e.preventDefault();
+
             let id = $('#eventId').val();
             let url = id ? `/jadwal-kajian/${id}` : '/jadwal-kajian';
             let method = id ? 'PUT' : 'POST';
+
+            showLoader();
+
+            // let $btn = $('#btn-submit');
+            // let $loader = $('#loader');
+            // let $text = $('#btn-text');
+
+            // Aktifkan loader
+            // $btn.attr('disabled', true);
+            // $loader.removeClass('d-none');
+            // $text.text('Menyimpan...');
 
             // Reset validation errors
             $('.is-invalid').removeClass('is-invalid');
@@ -477,9 +510,6 @@
                 method: method,
                 data: $(this).serialize(),
                 success: function(response) {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById(
-                        'eventModal'));
-                    modal.hide();
 
                     calendar.refetchEvents();
                     Swal.fire({
@@ -490,7 +520,6 @@
                 },
                 error: function(xhr) {
                     if (xhr.status === 422) {
-                        // Validation errors
                         const errors = xhr.responseJSON.errors;
                         Object.keys(errors).forEach(field => {
                             $(`#${field}`).addClass('is-invalid');
@@ -506,14 +535,20 @@
                                 'Gagal menyimpan jadwal kajian'
                         });
                     }
+                },
+                complete: function() {
+                    // Matikan loader
+                    hideLoader();
                 }
             });
         });
+
         $('#deleteBtn').on('click', function() {
             // Tutup modal terlebih dahulu
             const modal = bootstrap.Modal.getInstance(document.getElementById('eventModal'));
             modal.hide();
 
+            showLoader();
             Swal.fire({
                 title: 'Hapus Data?',
                 text: 'Data ini akan dihapus permanen.',
@@ -540,6 +575,7 @@
                     });
                 }
             });
+
         });
         @endauth
         });

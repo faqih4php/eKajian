@@ -20,7 +20,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 
     <link rel="stylesheet" href="/assets/vendor/fonts/iconify-icons.css">
-    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" /> --}}
 
     <!-- Core CSS -->
     <!-- build:css assets/vendor/css/theme.css  -->
@@ -29,6 +28,8 @@
     <link rel="stylesheet" href="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css">
     <link rel="stylesheet" href="/assets/vendor/css/core.css">
     <link rel="stylesheet" href="/assets/css/demo.css">
+
+    <link rel="stylesheet" href="/assets/vendor/libs/spinkit/spinkit.css">
 
     <link href="/assets/datatables/datatables.bootstrap4.min.css" rel="stylesheet">
 
@@ -81,6 +82,7 @@
         <div class="drag-target"></div>
 
     </div>
+    @yield('loader')
     <!-- / Layout wrapper -->
 
 
